@@ -1,0 +1,13 @@
+[project]
+name = "learning-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=1.5.0",
+    "httpx>=0.28.1",
+    "ipykernel>=7.3.0",
+    "mcp[cli,rich]>=2.2.0",
+    "python-dotenv>=1.2.3",
+]
