@@ -8,7 +8,7 @@ A hands-on learning project exploring the **Model Context Protocol (MCP)** along
 
 ```
 ┌─────────────────────────────────────┐       ┌──────────────────────────────────────────┐
-│            agent.py (client)         │       │            server.py (MCP server)         │
+│            agent.py (client)        │       │            server.py (MCP server)        │
 │                                     │       │                                          │
 │  AsyncAnthropic (Claude API)        │       │  MCPServer — streamable-http transport   │
 │  ↕ streaming / tool use loop        │ ───── │                                          │
