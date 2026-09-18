@@ -98,7 +98,7 @@ async def agent_message_turn(
     while True:
         buffer = ""
         final_message = None
-        with Live(console=console, refresh_per_second=5, vertical_overflow="visible") as live:
+        with Live(console=console, refresh_per_second=5, vertical_overflow="ellipsis") as live:
             async for event_type, data in chat(client=client, messages=messages, tools=tools, streaming=streaming, thinking=thinking):
                 if event_type == "text" and isinstance(data, str):
                     buffer += data
@@ -148,6 +148,8 @@ async def agent_message_turn(
                         console.print(f"Case have not been handled yet. CASE: {block}")
 
             if final_message.stop_reason != "tool_use":
+                if len(tool_results) > 0:
+                    add_message(messages, content=tool_results, agent="user")
                 break
 
             if total_tool_calls >= max_tool_iteration:
@@ -195,6 +197,8 @@ async def chat(
             async for event in stream:
                 if event.type == "content_block_delta" and event.delta.type == "text_delta":
                     yield ("text", event.delta.text)
+                # elif event.type == "thinking": # This case can be enabled when it is handled in the agetn_message_turn function
+                #     yield ("thinking", event.thinking)
                 elif event.type == "content_block_stop":
                     block = stream.current_message_snapshot.content[event.index]
                     if block.type != "text":
