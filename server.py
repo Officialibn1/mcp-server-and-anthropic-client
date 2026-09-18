@@ -23,9 +23,9 @@ except Exception as e:
     raise Exception("TRANSPORT_PORT should be a valid number.")
 
 server = MCPServer(
-    name="Calculator",
+    name="MY_MCP_SERVER",
     version="0.0.1",
-    description="A simple MCP server calculator"
+    description="My simple MCP server"
 )
 
 @server.tool()

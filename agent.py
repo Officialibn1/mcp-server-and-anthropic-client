@@ -10,12 +10,16 @@ load_dotenv()
 console = Console()
 messages = []
 
+# NO NEED TO VALIDATE BECUASE server.py ALREADY DOES THIS BEFORE RUNNING THE agent.py FILE
+TRANSPORT_HOST = os.environ.get("TRANSPORT_HOST")
+TRANSPORT_PORT = os.environ.get("TRANSPORT_PORT")
+
 async def start_chat():
     chatting = True
     async with AsyncAnthropic(
         api_key=os.environ.get("ANTHROPIC_API_KEY"),
         http_client=DefaultAioHttpClient()
-    ) as client, Client("http://127.0.0.1:2026/mcp") as mcp_client:
+    ) as client, Client(F"http://{TRANSPORT_HOST}:{TRANSPORT_PORT}/mcp") as mcp_client:
         try:
             tool_result = await mcp_client.list_tools()
             tools = mcp_tools_to_anthropic_tools(tool_result) + [
