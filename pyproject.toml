@@ -5,9 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "anthropic>=1.5.0",
+    "anthropic[aiohttp]>=1.5.0",
+    "filetype>=1.2.0",
     "httpx>=0.28.1",
     "ipykernel>=7.3.0",
     "mcp[cli,rich]>=2.2.0",
+    "pyperclip>=1.11.0",
     "python-dotenv>=1.2.3",
+    "rich>=15.0.0",
 ]
