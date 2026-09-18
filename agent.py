@@ -4,7 +4,7 @@ from mcp.client import Client
 from dotenv import load_dotenv
 from rich.console import Console
 from anthropic import AsyncAnthropic, DefaultAioHttpClient
-from utils import add_message, get_user_input, mcp_tools_to_anthropic_tools, upload_file, agent_message_turn, structure_user_message
+from utils import add_message, get_user_input, mcp_tools_to_anthropic_tools, upload_file, agent_message_turn, structure_user_message, get_max_tool_call_iteration
 
 load_dotenv()
 console = Console()
@@ -16,6 +16,9 @@ TRANSPORT_PORT = os.environ.get("TRANSPORT_PORT")
 
 async def start_chat():
     chatting = True
+    use_thinking = input("Enable thinking (y/n): ").strip().lower() == 'y'
+    allow_streaming = input("Allow streaming of AI response (y/n): ").strip().lower() == 'y'
+    max_tool_call_iteration = get_max_tool_call_iteration() or 10
     async with AsyncAnthropic(
         api_key=os.environ.get("ANTHROPIC_API_KEY"),
         http_client=DefaultAioHttpClient()
@@ -55,7 +58,16 @@ async def start_chat():
 
             user_message = structure_user_message(user_input)
             add_message(messages=messages, content=user_message, agent="user")
-            await agent_message_turn(client, mcp_client, messages, tools, console, streaming=True)
+            await agent_message_turn(
+                client,
+                mcp_client,
+                messages,
+                tools,
+                console,
+                streaming=allow_streaming,
+                thinking=use_thinking,
+                max_tool_iteration=max_tool_call_iteration
+            )
 
 if __name__ == "__main__":
     asyncio.run(start_chat())

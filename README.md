@@ -155,17 +155,15 @@ The agent will prompt you to type a message, paste from clipboard, or upload a f
 - **System prompt configuration** — expose the `coding_agent_system_prompt` MCP prompt through the agent, or allow the user to select a system prompt at startup.
 - **`set_reminder` persistence** — the reminder tool currently just echoes back; it could store reminders to a file or database and trigger notifications.
 - **Audio and image content blocks** — `upload_file` only handles documents and images today; the `read_file_bytes` helper is already in place and the result parsing could be extended for audio.
-- **Extended thinking** — the `chat()` function already supports `thinking=True` with adaptive effort; exposing this as a CLI flag would unlock it for users.
 
 ### Developer Experience
 
-- **CLI flags / `argparse`** — configure model, max tokens, streaming mode, and the MCP server URL from the command line instead of hardcoding defaults.
+- **CLI flags / `argparse`** — Get the MCP server URL from the command line or env file instead of hardcoding defaults.
 - **Logging** — replace `print` and `console.print` calls with structured logging (`structlog` or `logging`) with configurable verbosity.
 - **Tests** — unit tests for `utils.py` helpers and integration tests for the MCP server tools using `pytest` and `pytest-asyncio`.
 - **Type safety** — tighten remaining `Any`-typed parameters (e.g. `content`, `timestamp` in `set_reminder`) and add full `mypy` coverage.
 - **Docker / `docker-compose`** — containerise the server and agent so they are runnable without local Python setup.
 - **Connection retry** — if the MCP server is not yet available when the agent starts, retry with exponential backoff instead of crashing.
-- **Tool call cap as a config value** — the hard-coded `10` tool call limit in `agent_message_turn` should be an environment variable or CLI parameter.
 
 ### Architecture
 

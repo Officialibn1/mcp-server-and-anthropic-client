@@ -90,14 +90,16 @@ async def agent_message_turn(
     messages: list,
     tools: Optional[list],
     console: Console,
-    streaming: bool
+    streaming: bool,
+    thinking: bool,
+    max_tool_iteration: int
 ):
     total_tool_calls = 0
     while True:
         buffer = ""
         final_message = None
         with Live(console=console, refresh_per_second=5, vertical_overflow="visible") as live:
-            async for event_type, data in chat(client=client, messages=messages, tools=tools, streaming=streaming):
+            async for event_type, data in chat(client=client, messages=messages, tools=tools, streaming=streaming, thinking=thinking):
                 if event_type == "text" and isinstance(data, str):
                     buffer += data
                     live.update(Markdown(buffer))
@@ -148,7 +150,7 @@ async def agent_message_turn(
             if final_message.stop_reason != "tool_use":
                 break
 
-            if total_tool_calls >= 10:
+            if total_tool_calls >= max_tool_iteration:
                 tool_results.append(structure_user_message(user_input="You have hit the limit of tools calls per turn.")[0])
                 add_message(messages, content=tool_results, agent="user")
                 break
@@ -222,3 +224,17 @@ def read_file_bytes(path: str):
     except OSError as e:
         print(f"Could not read file. Path = {path}")
         return None
+
+def get_max_tool_call_iteration():
+    try:
+        value = input("Enter max iteration for tool call or leave empty to default to '10': ").strip()
+        if value == "":
+            value = 10
+        value = int(value)
+        return value
+    except ValueError as e:
+        print("Please enter a valid number.")
+        get_max_tool_call_iteration()
+    except:
+        print(f"Failed to parse value to number, defaulting to 10")
+        return 10
