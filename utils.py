@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from typing import Literal, Optional
 from anthropic import AsyncAnthropic
-from anthropic.types import ToolUseBlock, ServerToolUseBlock, WebSearchToolResultBlock, WebSearchResultBlock, ParsedTextBlock, ParsedMessage
+from anthropic.types import ToolUseBlock, ServerToolUseBlock, WebSearchToolResultBlock, WebSearchResultBlock, ParsedMessage, Message, TextBlock
 
 
 def get_user_input():
@@ -105,7 +105,7 @@ async def agent_message_turn(
                     live.update(Markdown(buffer))
                 if event_type == "block":
                     print_block_status(block=data, console=console)
-                elif event_type == "final" and isinstance(data, ParsedMessage):
+                elif event_type == "final" and (isinstance(data, ParsedMessage) or isinstance(data, Message)):
                     final_message = data
 
         if final_message:
@@ -138,12 +138,15 @@ async def agent_message_turn(
                                 "content": str(e),
                                 "is_error": True
                             })
+                    case TextBlock():
+                        console.print(Markdown(block.text))
+
                     case ServerToolUseBlock():
                         pass
+
                     case WebSearchToolResultBlock():
                         pass
-                    case ParsedTextBlock():
-                        pass
+
                     case _:
                         console.print(f"Case have not been handled yet. CASE: {block}")
 
