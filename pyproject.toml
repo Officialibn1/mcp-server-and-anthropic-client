@@ -8,6 +8,7 @@ dependencies = [
     "anthropic[aiohttp]>=1.5.0",
     "filetype>=1.2.0",
     "httpx>=0.28.1",
+    "inquirerpy>=0.3.4",
     "ipykernel>=7.3.0",
     "mcp[cli,rich]>=2.2.0",
     "pyperclip>=1.11.0",

@@ -92,14 +92,22 @@ async def agent_message_turn(
     console: Console,
     streaming: bool,
     thinking: bool,
-    max_tool_iteration: int
+    max_tool_iteration: int,
+    model: str
 ):
     total_tool_calls = 0
     while True:
         buffer = ""
         final_message = None
         with Live(console=console, refresh_per_second=5, vertical_overflow="ellipsis") as live:
-            async for event_type, data in chat(client=client, messages=messages, tools=tools, streaming=streaming, thinking=thinking):
+            async for event_type, data in chat(
+                client=client,
+                messages=messages,
+                tools=tools,
+                streaming=streaming,
+                thinking=thinking,
+                model=model
+            ):
                 if event_type == "text" and isinstance(data, str):
                     buffer += data
                     live.update(Markdown(buffer))

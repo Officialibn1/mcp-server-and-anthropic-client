@@ -1,24 +1,55 @@
 import os
 import asyncio
+from typing import cast
 from mcp.client import Client
 from dotenv import load_dotenv
 from rich.console import Console
+from InquirerPy.resolver import prompt
+from InquirerPy.validator import EmptyInputValidator
 from anthropic import AsyncAnthropic, DefaultAioHttpClient
-from utils import add_message, get_user_input, mcp_tools_to_anthropic_tools, upload_file, agent_message_turn, structure_user_message, get_max_tool_call_iteration
+from utils import add_message, get_user_input, mcp_tools_to_anthropic_tools, upload_file, agent_message_turn, structure_user_message
 
 load_dotenv()
 console = Console()
 messages = []
 
-# NO NEED TO VALIDATE BECUASE server.py ALREADY DOES THIS BEFORE RUNNING THE agent.py FILE
 TRANSPORT_HOST = os.environ.get("TRANSPORT_HOST")
 TRANSPORT_PORT = os.environ.get("TRANSPORT_PORT")
 
+choices = prompt([
+    {
+        "type": "list",
+        "name": "model",
+        "message": "Choose a model",
+        "choices": ["claude-haiku-4-5", "claude-haiku-4-6", "claude-sonnet-4-6"]
+    },
+    {
+        "type": "confirm",
+        "name": "streaming",
+        "message": "Do you want to enable streaming?",
+        "default": False
+    },
+    {
+        "type": "confirm",
+        "name": "thinking",
+        "message": "Do you want to enable thinking?",
+        "default": False
+    },
+    {
+        "type": "number",
+        "name": "max_tool_calls",
+        "message": "Set maximum tool calls per message",
+        "min_allowed": 3,
+        "max_allowed": 10,
+        # "float_allowed": True,
+        "default": 3,
+        "validate": EmptyInputValidator()
+    },
+])
+
 async def start_chat():
     chatting = True
-    use_thinking = input("Enable thinking (y/n): ").strip().lower() == 'y'
-    allow_streaming = input("Allow streaming of AI response (y/n): ").strip().lower() == 'y'
-    max_tool_call_iteration = get_max_tool_call_iteration() or 10
+
     async with AsyncAnthropic(
         api_key=os.environ.get("ANTHROPIC_API_KEY"),
         http_client=DefaultAioHttpClient()
@@ -64,9 +95,10 @@ async def start_chat():
                 messages,
                 tools,
                 console,
-                streaming=allow_streaming,
-                thinking=use_thinking,
-                max_tool_iteration=max_tool_call_iteration
+                model=str(choices["model"]),
+                streaming=bool(choices["streaming"]),
+                thinking=bool(choices["thinking"]),
+                max_tool_iteration=cast(int, choices["max_tool_calls"])
             )
 
 if __name__ == "__main__":
