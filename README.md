@@ -1,4 +1,4 @@
-# Learning MCP — Model Context Protocol with Claude
+# Model Context Protocol Server with Claude Client
 
 A hands-on learning project exploring the **Model Context Protocol (MCP)** alongside the **Anthropic Claude API**. It implements a custom MCP server exposing tools, resources, and prompts, and a CLI-based AI agent client that connects to that server and drives multi-turn conversations with tool use, web search, and file uploads.
 
@@ -65,7 +65,7 @@ The server and client communicate over **streamable HTTP** (MCP's recommended tr
 ## Project Structure
 
 ```
-learning-mcp/
+mcp-server-and-anthropic-client/
 ├── server.py          # MCP server — tools, resources, and prompts
 ├── agent.py           # CLI chat client — connects to the MCP server and Claude
 ├── utils.py           # Shared helpers: input, file upload, tool conversion, streaming
@@ -89,7 +89,7 @@ learning-mcp/
 ```bash
 # Clone the repo
 git clone <repo-url>
-cd learning-mcp
+cd mcp-server-and-anthropic-client
 
 # Install dependencies with uv
 uv sync
